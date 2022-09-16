@@ -39,7 +39,7 @@ As root, run
 ```shell
 apt install docker.io docker-compose
 adduser --system --group jitsi
-cp flatcar.env flatcar-jitsi.sh /home/jitsi
+cp -r flatcar-jitsi.sh resources/ /home/jitsi
 cd /home/jitsi
 su -s ./flatcar-jitsi.sh - jitsi
 cd -

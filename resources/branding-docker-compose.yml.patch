@@ -1,0 +1,14 @@
+diff --git docker-compose.yml docker-compose.yml
+index 22261bb..ee6f1e5 100644
+--- docker-compose.yml
++++ docker-compose.yml
+@@ -12,6 +12,9 @@ services:
+             - ${CONFIG}/web:/config:Z
+             - ${CONFIG}/web/crontabs:/var/spool/cron/crontabs:Z
+             - ${CONFIG}/transcripts:/usr/share/jitsi-meet/transcripts:Z
++            - ${CONFIG}/flatcar_logo-vertical-stacked-black.svg:/usr/share/jitsi-meet/images/flatcar-watermark.svg
++            - ${CONFIG}/flatcar_logo-vertical-stacked.svg:/usr/share/jitsi-meet/images/flatcar-logo.svg
++            - ${CONFIG}/flatcar_banner.png:/usr/share/jitsi-meet/images/welcome-background.png
+         environment:
+             - AMPLITUDE_ID
+             - ANALYTICS_SCRIPT_URLS
