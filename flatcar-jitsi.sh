@@ -16,7 +16,7 @@ DEST_DIR=~/jitsi-docker
 
 # Use a release version / tag from https://github.com/jitsi/docker-jitsi-meet
 #  otherwise the unstable nightly docker images will be used
-JITSI_VERSION="${JITSI_VERSION:-stable-7648-4}"
+JITSI_VERSION="${JITSI_VERSION:-stable-7882}"
 
 mkdir -p "${DEST_DIR}"
 cd ${DEST_DIR}
@@ -46,6 +46,8 @@ sed -i "s,^CONFIG=.*,CONFIG=${DEST_DIR}/__jitsi_docker_config__," .env
 
 cat "${RSRC_DIR}/flatcar.env" >> .env
 
+# add to .env to ease upgrade once deployed
+echo "JITSI_IMAGE_VERSION=${JITSI_VERSION}" >> .env
 
 # Start the services temporatily so we can create the moderator user
 docker-compose -f docker-compose.yml -f jibri.yml up -d
