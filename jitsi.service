@@ -5,8 +5,8 @@ Description=Jitsi server w/ streaming and recording capabilities
 User=jitsi
 Restart=always
 WorkingDirectory=/home/jitsi/jitsi-docker
-ExecStart=/usr/bin/docker-compose -f docker-compose.yml -f jibri.yml up
-ExecStop=/usr/bin/docker-compose -f docker-compose.yml -f jibri.yml down
+ExecStart=/usr/bin/docker compose -f docker-compose.yml -f jibri.yml up
+ExecStop=/usr/bin/docker compose -f docker-compose.yml -f jibri.yml down
 
 [Install]
 WantedBy=network.service

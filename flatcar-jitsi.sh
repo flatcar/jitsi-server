@@ -33,7 +33,7 @@ cp "${RSRC_DIR}/flatcar_logo-vertical-stacked-black.svg" \
    __jitsi_docker_config__/
 
 # Apply patch to mount above files into web container
-patch <"${RSRC_DIR}/branding-docker-compose.yml.patch"
+git apply "${RSRC_DIR}/branding-docker-compose.yml.patch"
 
 # Copy custom config snippet
 cp "${RSRC_DIR}/custom-interface_config.js" __jitsi_docker_config__/web/
@@ -50,12 +50,12 @@ cat "${RSRC_DIR}/flatcar.env" >> .env
 echo "JITSI_IMAGE_VERSION=${JITSI_VERSION}" >> .env
 
 # Start the services temporatily so we can create the moderator user
-docker-compose -f docker-compose.yml -f jibri.yml up -d
+docker compose -f docker-compose.yml -f jibri.yml up -d
 sleep 2
 
-docker-compose exec prosody /usr/bin/prosodyctl --config /config/prosody.cfg.lua register "${MODERATOR_USER}" meet.jitsi "${MODERATOR_PASS}"
+docker compose exec prosody /usr/bin/prosodyctl --config /config/prosody.cfg.lua register "${MODERATOR_USER}" meet.jitsi "${MODERATOR_PASS}"
 
-docker-compose -f docker-compose.yml -f jibri.yml down
+docker compose -f docker-compose.yml -f jibri.yml down
 
 cat >>.env<<EOF
 #
