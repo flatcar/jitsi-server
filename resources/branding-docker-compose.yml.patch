@@ -1,7 +1,7 @@
 diff --git docker-compose.yml docker-compose.yml
 index 22261bb..ee6f1e5 100644
---- docker-compose.yml
-+++ docker-compose.yml
+--- a/docker-compose.yml
++++ b/docker-compose.yml
 @@ -12,6 +12,9 @@ services:
              - ${CONFIG}/web:/config:Z
              - ${CONFIG}/web/crontabs:/var/spool/cron/crontabs:Z
