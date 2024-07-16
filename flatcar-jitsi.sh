@@ -16,7 +16,7 @@ DEST_DIR=~/jitsi-docker
 
 # Use a release version / tag from https://github.com/jitsi/docker-jitsi-meet
 #  otherwise the unstable nightly docker images will be used
-JITSI_VERSION="${JITSI_VERSION:-stable-7882}"
+JITSI_VERSION="${JITSI_VERSION:-stable-9584-1}"
 
 mkdir -p "${DEST_DIR}"
 cd ${DEST_DIR}
