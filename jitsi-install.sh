@@ -9,8 +9,11 @@ set -euo pipefail
 
 # --------
 # User provisioning settings
+MODERATOR_USER=flatcar
 DEPLOY_SET_PUBLIC_IP="true"
 DEPLOY_WAIT_FOR_HOSTNAME_DNS="true"
+# Will be auto-generated during installation if not set
+MODERATOR_PASS=""
 # --------
 
 function get_public_ip() {
@@ -41,7 +44,8 @@ function wait_for_dns() {
 # --
 
 SCRIPT_DIR="$(cd $(dirname ${BASH_SOURCE[0]}); pwd)"
-RSRC_DIR="${SCRIPT_DIR}/resources"
+JITSI_VERSION="$(cat "${SCRIPT_DIR}/JITSI_VERSION")"
+DEST_DIR="/opt/jitsi"
 
 if [ -n "$DEPLOY_SET_PUBLIC_IP" ] ; then
     if [ "$DEPLOY_SET_PUBLIC_IP" = "true" ] ; then
@@ -51,7 +55,7 @@ if [ -n "$DEPLOY_SET_PUBLIC_IP" ] ; then
 
     if [ "$DEPLOY_WAIT_FOR_HOSTNAME_DNS" = "true" ] ; then
     (
-        source "${RSRC_DIR}/flatcar.env"
+        source "${SCRIPT_DIR}/flatcar.env"
         echo "[DEPLOY] Waiting for '$JITSI_SERVER_FQDN' to resolve to '$DEPLOY_SET_PUBLIC_IP'"
         wait_for_dns "$DEPLOY_SET_PUBLIC_IP" "$JITSI_SERVER_FQDN"
         echo "[DEPLOY] '$JITSI_SERVER_FQDN' points to '$DEPLOY_SET_PUBLIC_IP'"
@@ -62,40 +66,32 @@ fi
 MODERATOR_USER=flatcar
 MODERATOR_PASS=$(openssl rand -hex 16)
 
-DEST_DIR=~/jitsi-docker
-
-
-# Use a release version / tag from https://github.com/jitsi/docker-jitsi-meet
-#  otherwise the unstable nightly docker images will be used
-JITSI_VERSION="${JITSI_VERSION:-stable-9584-1}"
-
 mkdir -p "${DEST_DIR}"
 cd ${DEST_DIR}
 
-git clone https://github.com/jitsi/docker-jitsi-meet.git .
-git checkout "${JITSI_VERSION}"
+JITSI_STATE_DIR="${DEST_DIR}/__jitsi_state__"
 
-mkdir -p __jitsi_docker_config__/{web,transcripts,prosody/config,prosody/prosody-plugins-custom,jicofo,jvb,jigasi,jibri}
+mkdir -p "${JITSI_STATE_DIR}"/{web,transcripts,prosody/config,prosody/prosody-plugins-custom,jicofo,jvb,jigasi,jibri}
 
 # Copy branding things
-cp "${RSRC_DIR}/flatcar_logo-vertical-stacked-black.svg" \
-   "${RSRC_DIR}/flatcar_logo-vertical-stacked.svg" \
-   "${RSRC_DIR}/flatcar_banner.png" \
-   __jitsi_docker_config__/
+cp "${SCRIPT_DIR}/flatcar_logo-vertical-stacked-black.svg" \
+   "${SCRIPT_DIR}/flatcar_logo-vertical-stacked.svg" \
+   "${SCRIPT_DIR}/flatcar_banner.png" \
+   "${JITSI_STATE_DIR}"/
 
 # Apply patch to mount above files into web container
-git apply "${RSRC_DIR}/branding-docker-compose.yml.patch"
+git apply "${SCRIPT_DIR}/branding-docker-compose.yml.patch"
 
 # Copy custom config snippet
-cp "${RSRC_DIR}/custom-interface_config.js" __jitsi_docker_config__/web/
+cp "${SCRIPT_DIR}/custom-interface_config.js" "${JITSI_STATE_DIR}"/web/
 
-cp env.example .env
+mv env.example .env
 ./gen-passwords.sh
 sed -i 's/^HTTP_PORT.*/HTTP_PORT=80/' .env
 sed -i 's/^HTTPS_PORT.*/HTTPS_PORT=443/' .env
-sed -i "s,^CONFIG=.*,CONFIG=${DEST_DIR}/__jitsi_docker_config__," .env
+sed -i "s,^CONFIG=.*,CONFIG=${DEST_DIR}/${JITSI_STATE_DIR}," .env
 
-cat "${RSRC_DIR}/flatcar.env" >> .env
+cat "${SCRIPT_DIR}/flatcar.env" >> .env
 
 # add to .env to ease upgrade once deployed
 echo "JITSI_IMAGE_VERSION=${JITSI_VERSION}" >> .env
@@ -108,7 +104,9 @@ fi
 docker compose -f docker-compose.yml -f jibri.yml up -d
 sleep 2
 
-docker compose exec prosody /usr/bin/prosodyctl --config /config/prosody.cfg.lua register "${MODERATOR_USER}" meet.jitsi "${MODERATOR_PASS}"
+docker compose exec prosody /usr/bin/prosodyctl \
+               --config /config/prosody.cfg.lua \
+               register "${MODERATOR_USER}" meet.jitsi "${MODERATOR_PASS}"
 
 docker compose -f docker-compose.yml -f jibri.yml down
 

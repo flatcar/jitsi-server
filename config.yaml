@@ -9,10 +9,15 @@ storage:
       contents:
         source: https://github.com/flatcar/sysext-bakery/releases/download/latest/docker_compose-2.24.5-arm64.raw
         
-    - path: /opt/jitsi/installer/flatcar-jitsi.sh
+    - path: /opt/jitsi/installer/JITSI_VERSION
+      mode: 0644
+      contents:
+        local: JITSI_VERSION
+
+    - path: /opt/jitsi/installer/jitsi-install.sh
       mode: 0755
       contents:
-        local: flatcar-jitsi.sh
+        local: jitsi-install.sh
 
     - path: /opt/jitsi/installer/config.yaml
       mode: 0644

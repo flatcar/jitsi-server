@@ -8,15 +8,17 @@ set -euo pipefail
 
 if [ $# -ne 1 ] ; then
     echo "Usage: $0 <version>"
-    echo "          <version> - Jitsi-docker release version to pull files for."
+    echo "          <version> - Jitsi-docker release version to generate config for."
     echo "                      Either a release version like 'stable-9584-1'"
-    echo "                      or 'latest' for latest development imaster branch."
+    echo "                      or 'latest' for latest development master branch."
     echo "                      See https://github.com/jitsi/docker-jitsi-meet/releases"
     echo "                      for avilable versions."
     echo
     exit 1
 fi
 
+# Get docker compose yaml, default env, and related config files from
+# jitsi-docker.
 version="$1"
 base_url=""
 files_list=( "docker-compose.yml" "env.example" "gen-passwords.sh" "jibri.yml" )
@@ -27,10 +29,20 @@ else
     base_url="https://raw.githubusercontent.com/jitsi/docker-jitsi-meet/${version}"
 fi
 
-echo "Fetching files for '${version}'"
+echo "Fetching config files for '${version}'"
 
 for file in "${files_list[@]}"; do
     echo -n "  ${file}: "
     curl -s "${base_url}/${file}" > "${file}"
     echo "OK"
 done
+
+echo "${version}" > JITSI_VERSION
+
+echo "Generating Ignition config"
+cat config.yaml \
+    | docker run --rm -i -v "$(pwd):/files" \
+            quay.io/coreos/butane:latest --files-dir /files \
+      > ignition.json
+
+echo "All done. Configuration available at 'ignition.json'."
