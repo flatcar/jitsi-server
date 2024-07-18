@@ -5,14 +5,65 @@
 # Use of this source code is governed by the Apache 2.0 license that can be
 # found in the LICENSE file.
 
-set -ex
+set -euo pipefail
+
+# --------
+# User provisioning settings
+DEPLOY_SET_PUBLIC_IP="true"
+DEPLOY_WAIT_FOR_HOSTNAME_DNS="true"
+# --------
+
+function get_public_ip() {
+    curl -s http://ip6.me/api/ \
+        | grep -E '^IPv4,' | awk -F, '{print $2}'
+}
+# --
+
+function wait_for_dns() {
+    local ip="$1"
+    local hostname="$2"
+
+    while true; do
+        local host_ip
+        for host_ip in $(host -t A "$hostname"  \
+                    | sed -n 's/.*has address \([0-9.:]\+\)$/\1/p'); do
+            echo "[DEPLOY]   Found '$host_ip' for '$hostname' (looking for '$ip')"
+            if [ "$host_ip" = "$ip" ] ; then
+                break
+            fi
+        done
+        if [ "$host_ip" = "$ip" ] ; then
+            break
+        fi
+        sleep 1
+    done
+}
+# --
+
+SCRIPT_DIR="$(cd $(dirname ${BASH_SOURCE[0]}); pwd)"
+RSRC_DIR="${SCRIPT_DIR}/resources"
+
+if [ -n "$DEPLOY_SET_PUBLIC_IP" ] ; then
+    if [ "$DEPLOY_SET_PUBLIC_IP" = "true" ] ; then
+        DEPLOY_SET_PUBLIC_IP="$(get_public_ip)"
+    fi
+    echo "[DEPLOY] My IP is '$DEPLOY_SET_PUBLIC_IP'"
+
+    if [ "$DEPLOY_WAIT_FOR_HOSTNAME_DNS" = "true" ] ; then
+    (
+        source "${RSRC_DIR}/flatcar.env"
+        echo "[DEPLOY] Waiting for '$JITSI_SERVER_FQDN' to resolve to '$DEPLOY_SET_PUBLIC_IP'"
+        wait_for_dns "$DEPLOY_SET_PUBLIC_IP" "$JITSI_SERVER_FQDN"
+        echo "[DEPLOY] '$JITSI_SERVER_FQDN' points to '$DEPLOY_SET_PUBLIC_IP'"
+    )
+    fi
+fi
 
 MODERATOR_USER=flatcar
 MODERATOR_PASS=$(openssl rand -hex 16)
 
-SCRIPT_DIR="$(cd $(dirname ${BASH_SOURCE[0]}); pwd)"
-RSRC_DIR="${SCRIPT_DIR}/resources"
 DEST_DIR=~/jitsi-docker
+
 
 # Use a release version / tag from https://github.com/jitsi/docker-jitsi-meet
 #  otherwise the unstable nightly docker images will be used
@@ -49,6 +100,10 @@ cat "${RSRC_DIR}/flatcar.env" >> .env
 # add to .env to ease upgrade once deployed
 echo "JITSI_IMAGE_VERSION=${JITSI_VERSION}" >> .env
 
+if [ -n "$DEPLOY_SET_PUBLIC_IP" ] ; then
+    echo "JVB_ADVERTISE_IPS=${DEPLOY_SET_PUBLIC_IP}" >> .env
+fi
+
 # Start the services temporatily so we can create the moderator user
 docker compose -f docker-compose.yml -f jibri.yml up -d
 sleep 2
@@ -64,7 +119,6 @@ cat >>.env<<EOF
 # password: ${MODERATOR_PASS}
 EOF
 
-set +x
 echo "==========================================================="
 echo "All done."
 echo
