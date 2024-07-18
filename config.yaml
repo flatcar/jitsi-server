@@ -8,14 +8,51 @@ storage:
     - path: /opt/extensions/docker_compose-2.24.5-arm64.raw
       contents:
         source: https://github.com/flatcar/sysext-bakery/releases/download/latest/docker_compose-2.24.5-arm64.raw
-
-
-
+        
     - path: /opt/jitsi/installer/flatcar-jitsi.sh
       mode: 0755
       contents:
         local: flatcar-jitsi.sh
 
+    - path: /opt/jitsi/installer/config.yaml
+      mode: 0644
+      contents:
+        local: config.yaml
+
+    - path: /opt/jitsi/installer/jitsi.service
+      mode: 0644
+      contents:
+        local: jitsi.service
+
+    - path: /opt/jitsi/installer/branding-docker-compose.yml.patch
+      mode: 0644
+      contents:
+        local: resources/branding-docker-compose.yml.patch
+
+    - path: /opt/jitsi/installer/custom-interface_config.js
+      mode: 0644
+      contents:
+        local: resources/custom-interface_config.js
+
+    - path: /opt/jitsi/installer/flatcar.env
+      mode: 0644
+      contents:
+        local: resources/flatcar.env
+
+    - path: /opt/jitsi/installer/flatcar_banner.png
+      mode: 0644
+      contents:
+        local: resources/flatcar_banner.png
+
+    - path: /opt/jitsi/installer/flatcar_logo-vertical-stacked-black.svg
+      mode: 0644
+      contents:
+        local: resources/flatcar_logo-vertical-stacked-black.svg
+
+    - path: /opt/jitsi/installer/flatcar_logo-vertical-stacked.svg
+      mode: 0644
+      contents:
+        local: resources/flatcar_logo-vertical-stacked.svg
 
   links:
     - path: /etc/extensions/docker-flatcar.raw
