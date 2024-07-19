@@ -6,14 +6,30 @@
 
 set -euo pipefail
 
-if [ $# -ne 1 ] ; then
-    echo "Usage: $0 <version>"
+usage() {
+    echo "Usage: $0 [--no-branding] <version>"
     echo "          <version> - Jitsi-docker release version to generate config for."
     echo "                      Either a release version like 'stable-9584-1'"
     echo "                      or 'latest' for latest development master branch."
     echo "                      See https://github.com/jitsi/docker-jitsi-meet/releases"
     echo "                      for avilable versions."
+    echo "          --no-branding Don't use Flatcar branding."
     echo
+}
+
+if [ $# -lt 1 ] ; then
+    usage
+    exit 1
+fi
+
+no_branding="false"
+if [ "$1" = "--no-branding" ] ; then
+    no_branding="true"
+    shift
+fi
+
+if [ $# -ne 1 ] ; then
+    usage
     exit 1
 fi
 
@@ -30,6 +46,7 @@ else
 fi
 
 echo "Fetching config files for '${version}'"
+echo "${version}" > JITSI_VERSION
 
 for file in "${files_list[@]}"; do
     echo -n "  ${file}: "
@@ -37,7 +54,10 @@ for file in "${files_list[@]}"; do
     echo "OK"
 done
 
-echo "${version}" > JITSI_VERSION
+if [ "$no_branding" = "false" ] ; then
+	echo "Applying branding patch"
+	git apply "resources/branding-docker-compose.yml.patch"
+fi
 
 echo "Generating Ignition config"
 cat config.yaml \

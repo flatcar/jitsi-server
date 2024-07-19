@@ -1,0 +1,14 @@
+[Unit]
+Description=Jitsi Installer
+
+[Service]
+User=jitsi
+Type=oneshot
+WorkingDirectory=/opt/jitsi
+# Installer will exit immediately if Jitsi was successfully installed
+ExecStart=/opt/jitsi/installer/jitsi-install.sh
+
+[Install]
+WantedBy=network.service
+WantedBy=multi-user.target
+

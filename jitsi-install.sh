@@ -7,14 +7,29 @@
 
 set -euo pipefail
 
-# --------
-# User provisioning settings
-MODERATOR_USER=flatcar
-DEPLOY_SET_PUBLIC_IP="true"
-DEPLOY_WAIT_FOR_HOSTNAME_DNS="true"
-# Will be auto-generated during installation if not set
-MODERATOR_PASS=""
-# --------
+INSTALLER_DIR="$(cd $(dirname ${BASH_SOURCE[0]}); pwd)"
+DEST_DIR="/opt/jitsi"
+if [ -f "${DEST_DIR}/.installation-complete" ] ; then
+    exit 0
+fi
+
+# ---- Source user settings and set defaults
+source "$INSTALLER_DIR/jitsi-install.env"
+
+MODERATOR_USER="${MODERATOR_USER:-flatcar}"
+MODERATOR_PASS="${MODERATOR_PASS:-$(openssl rand -hex 16)}"
+DEPLOY_SET_PUBLIC_IP="${DEPLOY_SET_PUBLIC_IP:-}"
+DEPLOY_WAIT_FOR_HOSTNAME_DNS="${DEPLOY_WAIT_FOR_HOSTNAME_DNS:-}"
+# --
+
+JITSI_VERSION="$(cat "${INSTALLER_DIR}/JITSI_VERSION")"
+JITSI_STATE_DIR="${DEST_DIR}/__jitsi_state__"
+
+if [ "$DEPLOY_SET_PUBLIC_IP" = "false" ] ; then
+	DEPLOY_SET_PUBLIC_IP=""
+fi
+
+# ---- Determine and set public IP, wait for DNS
 
 function get_public_ip() {
     curl -s http://ip6.me/api/ \
@@ -43,10 +58,6 @@ function wait_for_dns() {
 }
 # --
 
-SCRIPT_DIR="$(cd $(dirname ${BASH_SOURCE[0]}); pwd)"
-JITSI_VERSION="$(cat "${SCRIPT_DIR}/JITSI_VERSION")"
-DEST_DIR="/opt/jitsi"
-
 if [ -n "$DEPLOY_SET_PUBLIC_IP" ] ; then
     if [ "$DEPLOY_SET_PUBLIC_IP" = "true" ] ; then
         DEPLOY_SET_PUBLIC_IP="$(get_public_ip)"
@@ -55,45 +66,43 @@ if [ -n "$DEPLOY_SET_PUBLIC_IP" ] ; then
 
     if [ "$DEPLOY_WAIT_FOR_HOSTNAME_DNS" = "true" ] ; then
     (
-        source "${SCRIPT_DIR}/flatcar.env"
+        source "${INSTALLER_DIR}/jitsi-config.env"
         echo "[DEPLOY] Waiting for '$JITSI_SERVER_FQDN' to resolve to '$DEPLOY_SET_PUBLIC_IP'"
         wait_for_dns "$DEPLOY_SET_PUBLIC_IP" "$JITSI_SERVER_FQDN"
         echo "[DEPLOY] '$JITSI_SERVER_FQDN' points to '$DEPLOY_SET_PUBLIC_IP'"
     )
     fi
 fi
+# --
 
-MODERATOR_USER=flatcar
-MODERATOR_PASS=$(openssl rand -hex 16)
-
+# ---- Create destination, copy resources and env
+#
 mkdir -p "${DEST_DIR}"
-cd ${DEST_DIR}
-
-JITSI_STATE_DIR="${DEST_DIR}/__jitsi_state__"
-
 mkdir -p "${JITSI_STATE_DIR}"/{web,transcripts,prosody/config,prosody/prosody-plugins-custom,jicofo,jvb,jigasi,jibri}
 
 # Copy branding things
-cp "${SCRIPT_DIR}/flatcar_logo-vertical-stacked-black.svg" \
-   "${SCRIPT_DIR}/flatcar_logo-vertical-stacked.svg" \
-   "${SCRIPT_DIR}/flatcar_banner.png" \
+cp "${INSTALLER_DIR}/flatcar_logo-vertical-stacked-black.svg" \
+   "${INSTALLER_DIR}/flatcar_logo-vertical-stacked.svg" \
+   "${INSTALLER_DIR}/flatcar_banner.png" \
    "${JITSI_STATE_DIR}"/
 
-# Apply patch to mount above files into web container
-git apply "${SCRIPT_DIR}/branding-docker-compose.yml.patch"
-
 # Copy custom config snippet
-cp "${SCRIPT_DIR}/custom-interface_config.js" "${JITSI_STATE_DIR}"/web/
+cp "${INSTALLER_DIR}/custom-interface_config.js" "${JITSI_STATE_DIR}"/web/
+
+# copy docker-compose files and helper scripts
+cp "${INSTALLER_DIR}/env.example" \
+   "${INSTALLER_DIR}/docker-compose.yml" \
+   "${INSTALLER_DIR}/jibri.yml" \
+   "${INSTALLER_DIR}/gen-passwords.sh" \
+   "${DEST_DIR}"/
+
+cd "${DEST_DIR}"
 
 mv env.example .env
 ./gen-passwords.sh
-sed -i 's/^HTTP_PORT.*/HTTP_PORT=80/' .env
-sed -i 's/^HTTPS_PORT.*/HTTPS_PORT=443/' .env
-sed -i "s,^CONFIG=.*,CONFIG=${DEST_DIR}/${JITSI_STATE_DIR}," .env
+sed -i "s,^CONFIG=.*,CONFIG=${JITSI_STATE_DIR}," .env
 
-cat "${SCRIPT_DIR}/flatcar.env" >> .env
-
-# add to .env to ease upgrade once deployed
+cat "${INSTALLER_DIR}/jitsi-config.env" >> .env
 echo "JITSI_IMAGE_VERSION=${JITSI_VERSION}" >> .env
 
 if [ -n "$DEPLOY_SET_PUBLIC_IP" ] ; then
@@ -101,8 +110,8 @@ if [ -n "$DEPLOY_SET_PUBLIC_IP" ] ; then
 fi
 
 # Start the services temporatily so we can create the moderator user
-docker compose -f docker-compose.yml -f jibri.yml up -d
-sleep 2
+docker compose -f docker-compose.yml -f jibri.yml up -d --wait
+sleep 5
 
 docker compose exec prosody /usr/bin/prosodyctl \
                --config /config/prosody.cfg.lua \
@@ -124,3 +133,4 @@ echo "Moderator account:"
 echo "username: '${MODERATOR_USER}'"
 echo "password: '${MODERATOR_PASS}'"
 
+echo "$(date)" > "${DEST_DIR}/.installation-complete"
