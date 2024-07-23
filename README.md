@@ -67,6 +67,8 @@ Deploy a new Flatcar instance on a
 [cloud provider or private cloud of your choice](https://www.flatcar.org/docs/latest/installing/cloud/)
 and feed `ignition.json` to the deployment.
 
+If you deploy to a locked-down environment e.g. behind a NAT or firewall, make sure to open ports 80 and 443 (TCP) and 10000 (UDP) to the instance (and optionally port 22 if you want to ssh into your server).
+
 The deployment is zero-touch.
 There should be no need to interact with the instance to aid the deployment.
 
