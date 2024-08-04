@@ -121,12 +121,6 @@ See Customisation below on how to pass a custom user/password into the deploymen
   and [`jibri.yaml`](https://github.com/jitsi/docker-jitsi-meet/blob/master/jibri.yml)
   can be overridden there.
 
-### ARM64
-
-If you want to deploy to an ARM64 server you'll need to change [`config.yaml`](config.yaml) to use
-ARM64 sysexts for docker and docker compose. See the sysexts' `target:` lines in the `links:` section
-and the `- path:` and `source:` lines in the `files:` section respectively.
-
 ## Test the set-up locally
 
 You can test locally in a qemu VM.
