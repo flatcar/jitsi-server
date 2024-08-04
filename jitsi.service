@@ -8,9 +8,9 @@ User=jitsi
 Restart=always
 WorkingDirectory=/opt/jitsi
 ExecStart=/usr/bin/docker compose -f docker-compose.yml -f jibri.yml up
+RemainAfterExit=true
 ExecStop=/usr/bin/docker compose -f docker-compose.yml -f jibri.yml down
 
 [Install]
 WantedBy=network.service
 WantedBy=multi-user.target
-
