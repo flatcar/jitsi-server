@@ -7,6 +7,7 @@ Type=oneshot
 WorkingDirectory=/opt/jitsi
 # Installer will exit immediately if Jitsi was successfully installed
 ExecStart=/opt/jitsi/installer/jitsi-install.sh
+RemainAfterExit=true
 
 [Install]
 WantedBy=network.service

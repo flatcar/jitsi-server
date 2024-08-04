@@ -15,7 +15,8 @@ The Flatcar Jitsi server. Uses https://github.com/jitsi/docker-jitsi-meet.
 # Installation
 
 Although this installation is Flatcar branded you might re-use this repo to deploy your own Jitsi server.
-Branding is patched in at configuration build time; just skip this step (in `generate_config.sh`) and you'll get a stock Jitsi server.
+Branding is patched in at configuration build time; just skip this step (in `generate_config.sh`)
+and you'll get a stock Jitsi server.
 You can also use your own logos, banner, and watermark.
 
 The installation will go through these steps
@@ -61,13 +62,20 @@ https://github.com/jitsi/docker-jitsi-meet/releases.
 
 This generates `ignition.json` which we'll feed into the Flatcar deployment.
 
+Optionally pass `--no-branding` to `./generate_config.sh` to disable branding.
+
+If your target deployment is ARM64, pass `--arch arm64` to
+`./generate_config.sh` so the correct docker sysexts are used.
+
 ## Deploy
 
 Deploy a new Flatcar instance on a
 [cloud provider or private cloud of your choice](https://www.flatcar.org/docs/latest/installing/cloud/)
 and feed `ignition.json` to the deployment.
 
-If you deploy to a locked-down environment e.g. behind a NAT or firewall, make sure to open ports 80 and 443 (TCP) and 10000 (UDP) to the instance (and optionally port 22 if you want to ssh into your server).
+If you deploy to a locked-down environment e.g. behind a NAT or firewall, make
+sure to open ports 80 and 443 (TCP) and 10000 (UDP) to the instance (and
+optionally port 22 if you want to ssh into your server).
 
 The deployment is zero-touch.
 There should be no need to interact with the instance to aid the deployment.
@@ -129,7 +137,6 @@ and re-generate the configuration.
 Fetch the latest `flatcar_production_qemu_uefi_efi_code.fd`,
  `flatcar_production_qemu_uefi_efi_vars.fd`,
  `flatcar_production_qemu_uefi_image.img`,
- `flatcar_production_qemu_uefi_image.img.orig`, and
  `flatcar_production_qemu_uefi.sh` from https://stable.release.flatcar-linux.net/amd64-usr/current/ .
 
 Start a local Flatcar instance, pass `ignition.json` and export the necessary ports:
