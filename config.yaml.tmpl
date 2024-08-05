@@ -1,0 +1,155 @@
+variant: flatcar
+version: 1.0.0
+
+systemd:
+  units:
+    - name: jitsi.service
+      enabled: true
+
+storage:
+  links:
+    - path: /etc/extensions/docker-flatcar.raw
+      target: /dev/null
+      overwrite: true
+    - path: /etc/extensions/containerd-flatcar.raw
+      target: /dev/null
+      overwrite: true
+    - path: /etc/extensions/docker.raw
+      target: /opt/extensions/docker-25.0.3-@ARCH@.raw
+      overwrite: true
+    - path: /etc/extensions/docker_compose.raw
+      target: /opt/extensions/docker_compose-2.24.5-@ARCH@.raw
+      overwrite: true
+
+  files:
+    - path: /opt/extensions/docker-25.0.3-@ARCH@.raw
+      contents:
+        source: https://github.com/flatcar/sysext-bakery/releases/download/latest/docker-25.0.3-@ARCH@.raw
+    - path: /opt/extensions/docker_compose-2.24.5-@ARCH@.raw
+      contents:
+        source: https://github.com/flatcar/sysext-bakery/releases/download/latest/docker_compose-2.24.5-@ARCH@.raw
+
+    # Maintenance / reboot window for staged OS updates:
+    # Every monday morning at 1AM UTC
+    - path: /etc/flatcar/update.conf
+      overwrite: true
+      contents:
+        inline: |
+          REBOOT_STRATEGY=reboot
+          LOCKSMITHD_REBOOT_WINDOW_START="Mon 01:00"
+          LOCKSMITHD_REBOOT_WINDOW_LENGTH=1h          
+      mode: 0420
+
+    - path: /opt/jitsi/installer/JITSI_VERSION
+      mode: 0644
+      user:
+        name: jitsi
+      contents:
+        local: JITSI_VERSION
+
+    - path: /opt/jitsi/installer/jitsi-install.sh
+      mode: 0755
+      user:
+        name: jitsi
+      contents:
+        local: jitsi-install.sh
+
+    - path: /opt/jitsi/installer/jitsi-install.env
+      mode: 0644
+      user:
+        name: jitsi
+      contents:
+        local: jitsi-install.env
+
+    - path: /opt/jitsi/installer/config.yaml
+      mode: 0644
+      user:
+        name: jitsi
+      contents:
+        local: config.yaml
+
+    - path: /etc/systemd/system/jitsi.service
+      mode: 0644
+      user:
+        name: jitsi
+      contents:
+        local: jitsi.service
+
+    - path: /etc/systemd/system/jitsi-install.service
+      mode: 0644
+      user:
+        name: jitsi
+      contents:
+        local: jitsi-install.service
+
+    - path: /opt/jitsi/installer/custom-interface_config.js
+      mode: 0644
+      user:
+        name: jitsi
+      contents:
+        local: resources/custom-interface_config.js
+
+    - path: /opt/jitsi/installer/jitsi-config.env
+      mode: 0644
+      user:
+        name: jitsi
+      contents:
+        local: jitsi-config.env
+
+    - path: /opt/jitsi/installer/flatcar_banner.png
+      mode: 0644
+      user:
+        name: jitsi
+      contents:
+        source: https://raw.githubusercontent.com/flatcar/jitsi-server/main/resources/flatcar_banner.png
+
+    - path: /opt/jitsi/installer/flatcar_logo-vertical-stacked-black.svg
+      mode: 0644
+      user:
+        name: jitsi
+      contents:
+        local: resources/flatcar_logo-vertical-stacked-black.svg
+
+    - path: /opt/jitsi/installer/flatcar_logo-vertical-stacked.svg
+      mode: 0644
+      user:
+        name: jitsi
+      contents:
+        local: resources/flatcar_logo-vertical-stacked.svg
+
+    # These are downloaded by generate_config.sh for the jitsi release specified
+    - path: /opt/jitsi/installer/env.example
+      mode: 0644
+      user:
+        name: jitsi
+      contents:
+        local: env.example
+
+    - path: /opt/jitsi/installer/docker-compose.yml
+      mode: 0644
+      user:
+        name: jitsi
+      contents:
+        local: docker-compose.yml
+
+    - path: /opt/jitsi/installer/jibri.yml
+      mode: 0644
+      user:
+        name: jitsi
+      contents:
+        local: jibri.yml
+
+    - path: /opt/jitsi/installer/gen-passwords.sh
+      mode: 0755
+      user:
+        name: jitsi
+      contents:
+        local: gen-passwords.sh
+
+
+passwd:
+  users:
+    - name: jitsi
+      system: true 
+      home_dir: /opt/jitsi
+      groups: [ docker ]
