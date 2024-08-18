@@ -42,7 +42,7 @@ function wait_for_dns() {
     local hostname="$2"
 
     while true; do
-        local host_ip
+        local host_ip=""
         for host_ip in $(host -t A "$hostname"  \
                     | sed -n 's/.*has address \([0-9.:]\+\)$/\1/p'); do
             echo "[DEPLOY]   Found '$host_ip' for '$hostname' (looking for '$ip')"
@@ -50,7 +50,7 @@ function wait_for_dns() {
                 break
             fi
         done
-        if [ "$host_ip" = "$ip" ] ; then
+        if [ "${host_ip:-}" = "$ip" ] ; then
             break
         fi
         sleep 1
