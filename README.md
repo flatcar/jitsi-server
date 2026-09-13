@@ -2,7 +2,6 @@
 
 [![Flatcar OS](https://img.shields.io/badge/Flatcar-Website-blue?logo=data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBBZG9iZSBJbGx1c3RyYXRvciAyNi4wLjMsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9uOiA2LjAwIEJ1aWxkIDApICAtLT4NCjxzdmcgdmVyc2lvbj0iMS4wIiBpZD0ia2F0bWFuXzEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4Ig0KCSB2aWV3Qm94PSIwIDAgODAwIDYwMCIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgODAwIDYwMDsiIHhtbDpzcGFjZT0icHJlc2VydmUiPg0KPHN0eWxlIHR5cGU9InRleHQvY3NzIj4NCgkuc3Qwe2ZpbGw6IzA5QkFDODt9DQo8L3N0eWxlPg0KPHBhdGggY2xhc3M9InN0MCIgZD0iTTQ0MCwxODIuOGgtMTUuOXYxNS45SDQ0MFYxODIuOHoiLz4NCjxwYXRoIGNsYXNzPSJzdDAiIGQ9Ik00MDAuNSwzMTcuOWgtMzEuOXYxNS45aDMxLjlWMzE3Ljl6Ii8+DQo8cGF0aCBjbGFzcz0ic3QwIiBkPSJNNTQzLjgsMzE3LjlINTEydjE1LjloMzEuOVYzMTcuOXoiLz4NCjxwYXRoIGNsYXNzPSJzdDAiIGQ9Ik02NTUuMiw0MjAuOXYtOTUuNGgtMTUuOXY5NS40aC0xNS45VjI2MmgtMzEuOVYxMzQuOEgyMDkuNFYyNjJoLTMxLjl2MTU5aC0xNS45di05NS40aC0xNnY5NS40aC0xNS45djMxLjINCgloMzEuOXYxNS44aDQ3Ljh2LTE1LjhoMTUuOXYxNS44SDI3M3YtMTUuOGgyNTQuOHYxNS44aDQ3Ljh2LTE1LjhoMTUuOXYxNS44aDQ3Ljh2LTE1LjhoMzEuOXYtMzEuMkg2NTUuMnogTTQ4Ny44LDE1MWg3OS42djMxLjgNCgloLTIzLjZ2NjMuNkg1MTJ2LTYzLjZoLTI0LjJMNDg3LjgsMTUxTDQ4Ny44LDE1MXogTTIzMywyMTQuNlYxNTFoNjMuN3YyMy41aC0zMS45djE1LjhoMzEuOXYyNC4yaC0zMS45djMxLjhIMjMzVjIxNC42eiBNMzA1LDMxNy45DQoJdjE1LjhoLTQ3Ljh2MzEuOEgzMDV2NDcuN2gtOTUuNVYyODYuMUgzMDVMMzA1LDMxNy45eiBNMzEyLjYsMjQ2LjRWMTUxaDMxLjl2NjMuNmgzMS45djMxLjhMMzEyLjYsMjQ2LjRMMzEyLjYsMjQ2LjRMMzEyLjYsMjQ2LjR6DQoJIE00NDguMywzMTcuOXY5NS40aC00Ny44di00Ny43aC0zMS45djQ3LjdoLTQ3LjhWMzAyaDE1Ljl2LTE1LjhoOTUuNVYzMDJoMTUuOUw0NDguMywzMTcuOXogTTQ0MCwyNDYuNHYtMzEuOGgtMTUuOXYzMS44aC0zMS45DQoJdi03OS41aDE1Ljl2LTE1LjhoNDcuOHYxNS44aDE1Ljl2NzkuNUg0NDB6IE01OTEuNiwzMTcuOXY0Ny43aC0xNS45djE1LjhoMTUuOXYzMS44aC00Ny44di0zMS43SDUyOHYtMTUuOGgtMTUuOXY0Ny43aC00Ny44VjI4Ni4xDQoJaDEyNy4zVjMxNy45eiIvPg0KPC9zdmc+DQo=)](https://www.flatcar.org/)
 [![Discord](https://img.shields.io/badge/Discord-Chat%20with%20us!-5865F2?logo=discord)](https://discord.gg/PMYjFUsJyq)
-[![Matrix](https://img.shields.io/badge/Matrix-Chat%20with%20us!-green?logo=matrix)](https://app.element.io/#/room/#flatcar:matrix.org)
 [![Slack](https://img.shields.io/badge/Slack-Chat%20with%20us!-4A154B?logo=slack)](https://kubernetes.slack.com/archives/C03GQ8B5XNJ)
 [![Twitter Follow](https://img.shields.io/twitter/follow/flatcar?style=social)](https://x.com/flatcar)
 [![Mastodon Follow](https://img.shields.io/badge/Mastodon-Follow-6364FF?logo=mastodon)](https://hachyderm.io/@flatcar)
@@ -227,38 +226,22 @@ Best leave the Youtube streaming UI tab open. You'll need it later for the strea
 
 ## Announce the meeting
 
-We can now create announcement messages for Matrix and Slack, and update the Matrix channel's embedded youtube video.
+We can now create announcement messages for Discord and Slack.
 Announcements usually happen briefly (1h to 30min) before the meeting starts.
 
 - Open the Agenda "discussion" and edit the short summary at the top to add the youtube URL.
   There should be a bullet point `-Youtube live stream / recording: TBD`, replace TBD with the actual youtube URL.
 
-- Go to the "Flatcar" Matrix channel at https://app.element.io/?#/room/#flatcar.
-  - Open the "Room info" via the small circular "(i)" button at the top right.
-  - Select "Extensions".
-  - Click "+ Add extension" at the top right.
-  - In the dialog window, under "Added to this room", there should be the youtube extension. Click it.
-  - In order to update the URL, we need to remove and re-add it.
-    Select "Delete" to remove the youtube extension.
-  - This will bring you back to the main "Add extension" dialog.
-    Select the youtube widget which has now moved to "Widgets".
-  - Put in the youtube URL. There's no need to add a title as the title will be fetched from youtube. Click "Add".
-  - Close the "Add extensions" dialog.
-  - Back in the "Extensions" menu, the youtube widget will be listed.
-    Select "pin" via the little "pin" icon right of the youtube widget.
-  - Then click "Set layout for everyone" (text below the list of extensions".
-
-- Still in the Matrix channel, write the announcement.
+- In the [Flatcar Discord server](https://discord.gg/PMYjFUsJyq), write the announcement.
   **Keep in mind to always press Shift+Return, never _just_ Return, as this will prematurely send the message.**
   - On the first line, announce what meeting it is, when the meeting will start (time difference as well as absolute time).
-    You can use `@room` to ping everyone in the channel.
   - Below that, copy+paste the intro paragraph from the Agenda, and the first 2 bullet points (Jitsi URL and youtube URL).
     Add one bullet point with the Agenda URL
   - You can use emoji and markdown formatting.
     Leave empty lines between sections to improve readability.
     Example announcement (Please make sure to change the links to yours! And not use the ones in this example):
     ```
-	@room  📢 **The Flatcar community office hours will commence in ~45min**, at 2:30pm UTC
+	📢 **The Flatcar community office hours will commence in ~45min**, at 2:30pm UTC
 
 	In the office hours we discuss news and happenings in and around Flatcar, provide a space for our user community to discuss with maintainers, show demos, and do our release planning.
 
@@ -271,7 +254,7 @@ Announcements usually happen briefly (1h to 30min) before the meeting starts.
 
 - Slack: we announce the meeting in both the "Kubernetes" and "CNCF" slack, in the respective `#flatcar` channel.
   **Keep in mind to always press Shift+Return, never _just_ Return, as this will prematurely send the message.**
-  - You can copy+paste the _rendered_ (after sending) Matrix announcement (without `@room`); it will mostly keep its formatting (and emojis).
+  - Copy the announcement text to Slack and check its formatting before sending.
   - Pinging whole channels is (sadly) disabled in both Slacks.
 
 
